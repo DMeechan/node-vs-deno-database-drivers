@@ -1,0 +1,15 @@
+{
+  "lock": false,
+  "tasks": {
+    "start": "deno run -A src/deno.ts"
+  },
+  "imports": {
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  }
+}
