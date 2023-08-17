@@ -4,6 +4,9 @@
     "start": "deno run -A src/deno.ts"
   },
   "imports": {
+    "@planetscale/database": "npm:@planetscale/database@1.10.0",
+    "mysql2/promise": "npm:mysql2@^3.6.0/promise",
+    "shiyuhang0/mysql/tls": "https://raw.githubusercontent.com/shiyuhang0/mysql/tls/mod.ts"
   },
   "lint": {
     "rules": {
