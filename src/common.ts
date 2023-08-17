@@ -14,19 +14,9 @@ export interface Driver {
   close: () => Promise<void>;
 }
 
-export type Results = Array<{
-  runtime: Runtime;
-  driverName: string;
-  queryName: string;
-  iteration: number;
-  milliseconds: string;
-}>;
-
-export const queries = {
-  select1: "SELECT 1;",
-  selectPostsSmall: `SELECT * FROM posts LIMIT 25;`,
-  selectPostsMedium: `SELECT * FROM posts LIMIT 250;`,
-};
+export interface Results {
+  [key: string]: number[];
+}
 
 export async function executeQueries(
   params: {
@@ -44,7 +34,7 @@ export async function executeQueries(
       driverName: string;
       queryName: string;
       iteration: number;
-      milliseconds: string;
+      milliseconds: number;
     }
   > = [];
 
@@ -53,12 +43,12 @@ export async function executeQueries(
     await params.execute(params.query);
     const diff = performance.now() - start;
 
-    const operation = `${params.driverName}-${params.queryName}-${i}`;
-    const formattedDiff = diff.toLocaleString("en-GB", {
-      maximumFractionDigits: 2,
-      minimumFractionDigits: 2,
-    });
-    const paddedDiff = formattedDiff.padStart(6, " ");
+    const operation =
+      `${params.runtime}-${params.driverName}-${params.queryName}-${i}`;
+
+    // TODO: Do we care about the decimal places?
+    const roundedDiff = Math.round(diff);
+    const paddedDiff = String(roundedDiff).padStart(6, " ");
     console.log(`${paddedDiff}ms - ${operation}`);
 
     results.push({
@@ -66,7 +56,7 @@ export async function executeQueries(
       driverName: params.driverName,
       queryName: params.queryName,
       iteration: i,
-      milliseconds: formattedDiff,
+      milliseconds: roundedDiff,
     });
   }
 

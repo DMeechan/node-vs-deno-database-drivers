@@ -1,10 +1,18 @@
 import { writeFileSync } from "node:fs";
-import { Driver, executeQueries, queries, Results } from "./common.ts";
+
+import { Driver, executeQueries, Results } from "./common.ts";
+import { calcAverage, calcMax, calcMin, calcQuartile } from "./stats.ts";
+
+const queries = {
+  select1: "SELECT 1;",
+  selectPostsSmall: `SELECT * FROM posts LIMIT 25;`,
+  selectPostsMedium: `SELECT * FROM posts LIMIT 250;`,
+};
 
 export async function run(drivers: Driver[]): Promise<Results> {
-  let results: Results = [];
+  const results: Results = {};
 
-  // Maybe shuffle drivers array?
+  // TODO: Maybe shuffle drivers array?
   for (const driver of drivers) {
     const iterations = 5;
 
@@ -44,20 +52,46 @@ export async function run(drivers: Driver[]): Promise<Results> {
       execute: driver.execute,
     });
 
-    results = results.concat(
-      connectResults,
+    const driverResults = connectResults.concat(
       select1Results,
       selectPostsSmallResults,
       selectPostsMediumResults,
     );
 
+    for (const result of driverResults) {
+      const key = `${result.runtime},${result.driverName},${result.queryName}`;
+      if (!results[key]) {
+        results[key] = [];
+      }
+
+      results[key].push(result.milliseconds);
+    }
+
     await driver.close();
   }
 
-  const csv = toCsv(results);
-  writeResults(results[0].runtime, csv);
+  const stats = getStats(results);
+  const csv = toCsv(stats);
+  const runtime = drivers[0].runtime;
+  writeResults(runtime, csv);
 
   return results;
+}
+
+function getStats(results: Results) {
+  const stats = [];
+  for (const [testName, values] of Object.entries(results)) {
+    const min = calcMin(values);
+    const max = calcMax(values);
+    const avg = calcAverage(values);
+    const p25 = calcQuartile(values, 25);
+    const p75 = calcQuartile(values, 75);
+    const row = [testName, min, p25, avg, p75, max].join(",");
+    stats.push(row);
+    console.log(row);
+  }
+
+  return stats;
 }
 
 function writeResults(runtime: string, csv: string) {
@@ -67,25 +101,22 @@ function writeResults(runtime: string, csv: string) {
   writeFileSync(filename, csv);
 }
 
-function toCsv(results: Results): string {
+function toCsv(stats: any[]): string {
   const columns = [
     "runtime",
     "driverName",
     "queryName",
-    "iteration",
-    "milliseconds",
-  ];
+    "min",
+    "p25",
+    "avg",
+    "p75",
+    "max",
+  ].join(",");
 
   const csvString = [
     columns,
-    ...results.map((item) => [
-      item.runtime,
-      item.driverName,
-      item.queryName,
-      item.iteration,
-      item.milliseconds,
-    ]),
-  ].map((e) => e.join(","))
+    ...stats,
+  ]
     .join("\n")
     .concat("\n");
 
