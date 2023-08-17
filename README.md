@@ -1,8 +1,10 @@
-# Node vs Deno Database Drivers
+# Node vs Deno Database Drivers - Latency Comparison
 
 I recently noticed some elevated latency when connecting to a Planetscale MySQL database in a Deno project.
 
 This project exists to verify how latency compares between the various MySQL and Postgres clients available in Node and Deno.
+
+The goal is to understand if the same drivers have different latency characteristics when running on Node vs Deno. For more driver breadth, I've included both MySQL and Postges drivers.
 
 ### How do I run this?
 
@@ -32,7 +34,7 @@ node -v
   - [Supabase](https://supabase.com/) - Postgres (I'm just using the database, not their "Firebase alternative" features)
 - Create a `.env` file: `cp .env.example .env`
 - Enter your database connection URLs into the `.env` file
-
+- Copy the SQL queries in `setup.sql` and run them against your databases (for now this is just a manual process) - this will create a new table with 250 rows
 
 ### Running it
 
