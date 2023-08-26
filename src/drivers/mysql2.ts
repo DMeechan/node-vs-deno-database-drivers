@@ -15,6 +15,7 @@ export async function mysql2(
 
   return {
     runtime: params.runtime,
+    databaseProvider: params.databaseProvider,
     driverName: "mysql2",
     execute: (query) => connection.execute(query),
     close: () => connection.end(),

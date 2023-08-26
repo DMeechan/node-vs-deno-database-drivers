@@ -19,6 +19,7 @@ export async function run(drivers: Driver[]): Promise<Results> {
     const connectResults = await executeQueries({
       runtime: driver.runtime,
       driverName: driver.driverName,
+      databaseProvider: driver.databaseProvider,
       queryName: "connect",
       query: queries.select1,
       iterations: 1,
@@ -28,6 +29,7 @@ export async function run(drivers: Driver[]): Promise<Results> {
     const select1Results = await executeQueries({
       runtime: driver.runtime,
       driverName: driver.driverName,
+      databaseProvider: driver.databaseProvider,
       queryName: "select1",
       query: queries.select1,
       iterations,
@@ -37,6 +39,7 @@ export async function run(drivers: Driver[]): Promise<Results> {
     const selectPostsSmallResults = await executeQueries({
       runtime: driver.runtime,
       driverName: driver.driverName,
+      databaseProvider: driver.databaseProvider,
       queryName: "selectPostsSmall",
       query: queries.selectPostsSmall,
       iterations,
@@ -46,6 +49,7 @@ export async function run(drivers: Driver[]): Promise<Results> {
     const selectPostsMediumResults = await executeQueries({
       runtime: driver.runtime,
       driverName: driver.driverName,
+      databaseProvider: driver.databaseProvider,
       queryName: "selectPostsMedium",
       query: queries.selectPostsMedium,
       iterations,
@@ -59,7 +63,9 @@ export async function run(drivers: Driver[]): Promise<Results> {
     );
 
     for (const result of driverResults) {
-      const key = `${result.runtime},${result.driverName},${result.queryName}`;
+      const key =
+        `${result.runtime},${result.databaseProvider},${result.driverName},${result.queryName}`;
+
       if (!results[key]) {
         results[key] = [];
       }
@@ -104,6 +110,7 @@ function writeResults(runtime: string, csv: string) {
 function toCsv(stats: any[]): string {
   const columns = [
     "runtime",
+    "databaseProvider",
     "driverName",
     "queryName",
     "min",

@@ -6,7 +6,7 @@
   "imports": {
     "@planetscale/database": "npm:@planetscale/database@1.10.0",
     "mysql2/promise": "npm:mysql2@^3.6.0/promise",
-    "shiyuhang0/mysql/tls": "https://raw.githubusercontent.com/shiyuhang0/mysql/tls/mod.ts"
+    "deno_mysql": "https://deno.land/x/mysql@v2.12.0/mod.ts"
   },
   "lint": {
     "rules": {

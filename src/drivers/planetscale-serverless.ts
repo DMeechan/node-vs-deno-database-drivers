@@ -8,6 +8,7 @@ export async function planetscaleServerless(
 
   return {
     runtime: params.runtime,
+    databaseProvider: params.databaseProvider,
     driverName: "ps_serverless",
     execute: (query) => conn.execute(query),
     close: async () => {},
