@@ -1,7 +1,7 @@
 import "https://deno.land/std@0.198.0/dotenv/load.ts";
 
 import postgres from "postgresjs";
-import { Client } from "deno_mysql";
+import { Client as DenoMysqlClient } from "deno_mysql";
 import { connect } from "@planetscale/database";
 
 import { postgresjs } from "./drivers/postgresjs.ts";
@@ -17,10 +17,10 @@ async function init() {
     throw new Error("Missing PLANETSCALE_URL");
   }
 
-  const supabasePostgresUrl = Deno.env.get("SUPABASE_URL")!;
-  if (!supabasePostgresUrl) {
-    throw new Error("Missing SUPABASE_URL");
-  }
+  // const supabasePostgresUrl = Deno.env.get("SUPABASE_URL")!;
+  // if (!supabasePostgresUrl) {
+  //   throw new Error("Missing SUPABASE_URL");
+  // }
 
   const neonPostgresUrl = Deno.env.get("NEON_URL")!;
   if (!neonPostgresUrl) {
@@ -34,17 +34,18 @@ async function init() {
     databaseUrl: neonPostgresUrl,
   });
 
-  const postgresjsDriverUsingSupabase = await postgresjs({
-    runtime,
-    databaseProvider: "postgres_supabase",
-    driver: postgres,
-    databaseUrl: neonPostgresUrl,
-  });
+  // See README for more info
+  // const postgresjsDriverUsingSupabase = await postgresjs({
+  //   runtime,
+  //   databaseProvider: "postgres_supabase",
+  //   driver: postgres,
+  //   databaseUrl: supabasePostgresUrl,
+  // });
 
   const denoMysqlDriver = await denoMysql({
     runtime,
     databaseProvider: "mysql_planetscale",
-    driver: Client,
+    driver: DenoMysqlClient,
     databaseUrl: planetscaleMysqlUrl,
   });
 
@@ -59,7 +60,6 @@ async function init() {
 
   await run([
     postgresjsDriverUsingNeon,
-    postgresjsDriverUsingSupabase,
     denoMysqlDriver,
     planetscaleServerlessDriver,
   ]);

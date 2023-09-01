@@ -72,3 +72,15 @@ RESULTS: coming soon.
 > ⚠️ MySQL2 and MariaDB drivers do not currently work on Deno when using TLS, so I've unfortunately had to exclude it from this comparison.
 
 See this bug report for more information: https://github.com/denoland/deno/issues/20293
+
+I also gave up on using Supabase because of a certificate error when connecting to Supabase Postgres using Postgresjs in Deno:
+
+```javascript
+// Using deno 1.36.3+c9223bc
+
+error: Uncaught (in promise) InvalidData: invalid peer certificate: UnknownIssuer
+        while ((result = socket.readyState === 'open' && await raw.read(b))) {
+                                                         ^
+    at async TlsConn.read (ext:deno_net/01_net.js:107:15)
+    at async success (https://deno.land/x/postgresjs@v3.3.5/polyfills.js:109:58)
+```

@@ -38,7 +38,7 @@ async function init() {
     runtime,
     databaseProvider: "postgres_supabase",
     driver: postgres,
-    databaseUrl: neonPostgresUrl,
+    databaseUrl: supabasePostgresUrl,
   });
 
   const mysql2Driver = await mysql2(
@@ -65,6 +65,8 @@ async function init() {
     mysql2Driver,
     planetscaleServerlessDriver,
   ]);
+
+  process.exit();
 }
 
 init();
