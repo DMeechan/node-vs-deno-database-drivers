@@ -14,7 +14,7 @@ export async function run(drivers: Driver[]): Promise<Results> {
 
   // TODO: Maybe shuffle drivers array?
   for (const driver of drivers) {
-    const iterations = 5;
+    const iterations = 20;
 
     const connectResults = await executeQueries({
       runtime: driver.runtime,
