@@ -6,7 +6,9 @@
   "imports": {
     "@planetscale/database": "npm:@planetscale/database@1.10.0",
     "mysql2/promise": "npm:mysql2@^3.6.0/promise",
-    "deno_mysql": "https://deno.land/x/mysql@v2.12.0/mod.ts"
+    "mariadb": "npm:mariadb@^3.2.0",
+    "deno_mysql": "https://deno.land/x/mysql@v2.12.0/mod.ts",
+    "postgresjs": "https://deno.land/x/postgresjs@v3.3.5/mod.js"
   },
   "lint": {
     "rules": {

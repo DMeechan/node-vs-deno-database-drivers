@@ -69,6 +69,6 @@ RESULTS: coming soon.
 
 ### Compatibility issues
 
-> ⚠️ MySQL2 driver doesn't currently work on Deno when using TLS, so I've unfortunately had to exclude it from this comparison.
+> ⚠️ MySQL2 and MariaDB drivers do not currently work on Deno when using TLS, so I've unfortunately had to exclude it from this comparison.
 
 See this bug report for more information: https://github.com/denoland/deno/issues/20293

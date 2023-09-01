@@ -10,6 +10,7 @@ type DriverName =
   | "ps_serverless"
   | "mysql2"
   | "mysql"
+  | "mariadb"
   | "postgresjs";
 
 export interface DriverParams {

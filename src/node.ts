@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import postgres from "postgres";
 import { createConnection as createConnectionMysql2 } from "mysql2/promise";
-import { connect } from "@planetscale/database";
+import { connect as planetscaleConnect } from "@planetscale/database";
 
 import { postgresjs } from "./drivers/postgresjs.ts";
 import { mysql2 } from "./drivers/mysql2.ts";
@@ -54,7 +54,7 @@ async function init() {
     {
       runtime,
       databaseProvider: "mysql_planetscale",
-      driver: connect,
+      driver: planetscaleConnect,
       databaseUrl: planetscaleMysqlUrl,
     },
   );

@@ -1,15 +1,12 @@
 import "https://deno.land/std@0.198.0/dotenv/load.ts";
 
-import postgres from "https://deno.land/x/postgresjs@v3.3.5/mod.js";
+import postgres from "postgresjs";
 import { Client } from "deno_mysql";
 import { connect } from "@planetscale/database";
 
 import { postgresjs } from "./drivers/postgresjs.ts";
 import { denoMysql } from "./drivers/deno_mysql.ts";
 import { planetscaleServerless } from "./drivers/planetscale-serverless.ts";
-
-// import { createConnection } from "mysql2/promise";
-// import { mysql2 } from "./drivers/mysql2.ts";
 
 import { run } from "./run.ts";
 
@@ -59,11 +56,6 @@ async function init() {
       databaseUrl: planetscaleMysqlUrl,
     },
   );
-
-  // The mysql2 driver does not currently run on Deno with TLS enabled - see README for more info
-  // const mysql2Driver = await mysql2(
-  //   { runtime, driver: createConnection, databaseUrl: planetscaleMysqlUrl },
-  // );
 
   await run([
     postgresjsDriverUsingNeon,

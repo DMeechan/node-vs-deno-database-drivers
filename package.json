@@ -17,6 +17,7 @@
   "dependencies": {
     "@planetscale/database": "^1.10.0",
     "dotenv": "^16.3.1",
+    "mariadb": "^3.2.0",
     "mysql2": "^3.6.0",
     "postgres": "^3.3.5",
     "ts-node": "^10.9.1",
