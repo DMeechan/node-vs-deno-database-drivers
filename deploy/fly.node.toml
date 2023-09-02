@@ -1,0 +1,25 @@
+# fly.toml app configuration file generated for db-drivers-node on 2023-09-02T19:34:20+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "db-drivers-node"
+primary_region = "lhr"
+
+[build]
+  # This Dockerfile path may be wrong. Need to test it.
+  dockerfile = "deploy/Dockerfile.node" 
+
+[processes]
+  app = "npm run start"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = false
+  min_machines_running = 1
+  processes = ["app"]
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = "443"

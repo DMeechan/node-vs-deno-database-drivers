@@ -1,0 +1,39 @@
+# Based on https://github.com/denoland/deno_docker/blob/main/alpine.dockerfile
+
+# "bin" stage
+ARG DENO_VERSION=1.36.1
+ARG BIN_IMAGE=denoland/deno:bin-${DENO_VERSION}
+FROM ${BIN_IMAGE} AS bin
+
+# "base" stage
+FROM frolvlad/alpine-glibc:alpine-3.17 as base
+RUN apk --no-cache add ca-certificates
+RUN addgroup --gid 1000 deno \
+  && adduser --uid 1000 --disabled-password deno --ingroup deno \
+  && mkdir /deno-dir/ \
+  && chown deno:deno /deno-dir/
+
+ENV DENO_DIR /deno-dir/
+ENV DENO_INSTALL_ROOT /usr/local
+
+ARG DENO_VERSION
+ENV DENO_VERSION=${DENO_VERSION}
+COPY --from=bin /deno /bin/deno
+
+# "builder" stage
+FROM base as builder
+WORKDIR /deno-dir
+COPY . .
+
+RUN deno cache src/deno.ts
+
+# "production" stage
+FROM builder as production
+WORKDIR /deno-dir
+COPY . .
+
+ENTRYPOINT ["/bin/deno"]
+
+# This CMD is here so we can run this image locally, but it won't be used by Fly.
+# The CMD will be overridden by the process command in our Fly TOML files.
+CMD ["task", "start"]

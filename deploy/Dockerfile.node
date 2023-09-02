@@ -1,0 +1,13 @@
+FROM node:18.17.1
+
+WORKDIR /app
+
+# This is not an efficient Dockerfile - do not copy this.
+# I just need this to work once and I can then move on.
+COPY . .
+
+# Use --prefer-offline, which tells npm to use locally cached packages when available
+# http://www.tiernok.com/posts/2019/faster-npm-installs-during-ci/
+RUN npm ci --prefer-offline
+
+CMD npm run start
