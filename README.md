@@ -4,7 +4,7 @@ I recently noticed some elevated latency when connecting to a Planetscale MySQL 
 
 This project exists to verify how latency compares between the various MySQL and Postgres clients available in Node and Deno.
 
-The goal is to understand if the same drivers have different latency characteristics when running on Node vs Deno. For more driver breadth, I've included both MySQL and Postges drivers.
+The goal is to understand if the same drivers have different latency characteristics when running on Node vs Deno. For more driver breadth, I've included both MySQL and Postgres drivers.
 
 ### How do I run this?
 
@@ -37,33 +37,43 @@ node -v
 
 ### Running it
 
-Run the Node.js tests:
+Start the Node.js tests server:
 
 ```bash
 npm run start
 ```
 
-Run the Deno tests:
+Visit `http://localhost:8080` and wait a bit for it to run! (browsers may time out while waiting for results - I recommend using a HTTP client like [Insomnia](https://insomnia.rest/), which didn't time out in my testing).
+
+When you're done, shut down the server so port 8080 is free to run with Deno.
+
+Now run the Deno tests server and repeat the same steps:
 
 ```bash
 deno task start
 ```
 
-Look in your `results` folder for the CSV results!
+
 
 ### Results
 
 Testing is done using:
 
-- Fly.io `performance-1x` server with 1 CPU and 2GB RAM, hosted in London
-- Planetscale Serverless MySQL, hosted in `aws-eu-west-2` (London)
-- Supabase Postgres, hosted in `gcp-europe-west2` (London)
+- Fly.io `performance-1x` server with 1 CPU and 2GB RAM, hosted in `lhr` (London)
+- Planetscale Serverless MySQL free tier, hosted in `aws-eu-west-2` (London)
+- Supabase Postgres free tier, hosted in `gcp-europe-west2` (London)
+- 50 iterations per query, per driver, per runtime
 
 This comparison **is not intended to compare Postgres vs MySQL**.
 
-The goal is to compare the performance of various database drivers in the Node.js and Deno ecosystems.
+The goal is to compare the performance of various database drivers in the Node.js and Deno ecosystems. These graphs show the min/p25/p75/max of each driver and runtime tested:
 
-RESULTS: coming soon.
+![Connect and SELECT 1 - query results](results/2023-09-02-fly-london-results-1.png?raw=true)
+![Select 25 rows and select 250 rows - query results](results/2023-09-02-fly-london-results-2.png?raw=true)
+
+The results are pretty close, with the exception of [Planetscale Serverless](https://www.npmjs.com/package/@planetscale/database) when running on Deno.
+
+You can find the data in CSV format in `./results`.
 
 ### Compatibility issues
 
