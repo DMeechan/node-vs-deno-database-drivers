@@ -9,7 +9,7 @@ const queries = {
   selectPostsMedium: `SELECT * FROM posts LIMIT 250;`,
 };
 
-export async function run(drivers: Driver[]): Promise<Results> {
+export async function run(drivers: Driver[]): Promise<string> {
   const results: Results = {};
 
   // TODO: Maybe shuffle drivers array?
@@ -78,10 +78,10 @@ export async function run(drivers: Driver[]): Promise<Results> {
 
   const stats = getStats(results);
   const csv = toCsv(stats);
-  const runtime = drivers[0].runtime;
-  writeResults(runtime, csv);
+  // const runtime = drivers[0].runtime;
+  // writeResults(runtime, csv);
 
-  return results;
+  return csv;
 }
 
 function getStats(results: Results) {

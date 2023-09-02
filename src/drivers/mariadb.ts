@@ -22,15 +22,3 @@ export async function mariaDb(params: DriverParams): Promise<Driver> {
     close: (): Promise<void> => connection.end(),
   };
 }
-
-// import mariadbLib from "mariadb";
-// import { mariaDb } from "./drivers/mariadb.ts";
-// mariaDB hangs on connection.end() with Node 18 but succeeds with Node 16 :(
-// const mariadbDriver = await mariaDb(
-//   {
-//     runtime,
-//     databaseProvider: "mysql_planetscale",
-//     driver: mariadbLib,
-//     databaseUrl: planetscaleMysqlUrl,
-//   },
-// );

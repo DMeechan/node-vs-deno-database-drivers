@@ -30,11 +30,10 @@ node -v
 - Clone and `cd` into this repository
 - Set up your databases and make a note of the database connection URLs. I'm using:
   - [Planetscale](https://planetscale.com/) - serverless MySQL
-  - [Neon.tech](https://neon.tech/) - serverless Postgres
-  - [Supabase](https://supabase.com/) - Postgres (I'm just using the database, not their "Firebase alternative" features)
+  - [Supabase](https://supabase.com/) - Postgres (I'm just using the database, not their "Firebase alternative" features). To connect to Supabase using Deno, you'll need to download an "SSL Certificate" from your Supabase database settings. Then save it in your local repo: `./certs/supabase.crt` ([see here](https://github.com/denoland/deno/issues/20362) and look into `DENO_CERT` environment variable for more info)
 - Create a `.env` file: `cp .env.example .env`
 - Enter your database connection URLs into the `.env` file
-- Copy the SQL queries in `setup.sql` and run them against your databases (for now this is just a manual process) - this will create a new table with 250 rows
+- Connect to your databases and (manually) execute the SQL queries in `setup.sql` - it will create a `posts` table with 250 rows
 
 ### Running it
 
@@ -56,10 +55,9 @@ Look in your `results` folder for the CSV results!
 
 Testing is done using:
 
-- Fly.io `performance-1x` server with 1 CPU and 2GB RAM, hosted in Frankfurt
-- Planetscale Serverless MySQL, hosted in `aws-eu-central-1` (Frankfurt)
-- Neon.tech Serverless Postgres, hosted in `aws-eu-central-1` (Frankfurt)
-- Supabase Postgres, hosted in `gcp-europe-west3` (Frankfurt)
+- Fly.io `performance-1x` server with 1 CPU and 2GB RAM, hosted in London
+- Planetscale Serverless MySQL, hosted in `aws-eu-west-2` (London)
+- Supabase Postgres, hosted in `gcp-europe-west2` (London)
 
 This comparison **is not intended to compare Postgres vs MySQL**.
 
@@ -69,18 +67,6 @@ RESULTS: coming soon.
 
 ### Compatibility issues
 
-> ⚠️ MySQL2 and MariaDB drivers do not currently work on Deno when using TLS, so I've unfortunately had to exclude it from this comparison.
+> ⚠️ MySQL2 and MariaDB drivers do not currently work on Deno when using TLS, so this repo currently only uses them with Node.js.
 
 See this bug report for more information: https://github.com/denoland/deno/issues/20293
-
-I also gave up on using Supabase because of a certificate error when connecting to Supabase Postgres using Postgresjs in Deno:
-
-```javascript
-// Using deno 1.36.3+c9223bc
-
-error: Uncaught (in promise) InvalidData: invalid peer certificate: UnknownIssuer
-        while ((result = socket.readyState === 'open' && await raw.read(b))) {
-                                                         ^
-    at async TlsConn.read (ext:deno_net/01_net.js:107:15)
-    at async success (https://deno.land/x/postgresjs@v3.3.5/polyfills.js:109:58)
-```

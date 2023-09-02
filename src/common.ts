@@ -1,9 +1,8 @@
 type Runtime = "node" | "deno";
 
 type DatabaseProvider =
-  | "mysql_planetscale"
-  | "postgres_neon"
-  | "postgres_supabase";
+  | "mysql"
+  | "pgsql";
 
 type DriverName =
   | "deno_mysql"

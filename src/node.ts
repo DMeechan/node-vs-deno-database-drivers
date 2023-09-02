@@ -1,72 +1,88 @@
 import "dotenv/config";
+import http from "http";
 
 import postgres from "postgres";
 import { createConnection as createConnectionMysql2 } from "mysql2/promise";
+import mariadbLib from "mariadb";
 import { connect as planetscaleConnect } from "@planetscale/database";
 
 import { postgresjs } from "./drivers/postgresjs.ts";
 import { mysql2 } from "./drivers/mysql2.ts";
+import { mariaDb } from "./drivers/mariadb.ts";
 import { planetscaleServerless } from "./drivers/planetscale-serverless.ts";
 import { run } from "./run.ts";
 
-async function init() {
+async function runWithNode() {
   const runtime = "node" as const;
 
-  const planetscaleMysqlUrl = process.env.PLANETSCALE_URL;
-  if (!planetscaleMysqlUrl) {
-    throw new Error("Missing PLANETSCALE_URL");
+  const mysqlUrl = process.env.MYSQL_URL;
+  if (!mysqlUrl) {
+    throw new Error("Missing MYSQL_URL");
   }
 
-  const supabasePostgresUrl = process.env.SUPABASE_URL;
-  if (!supabasePostgresUrl) {
-    throw new Error("Missing SUPABASE_URL");
+  const postgresUrl = process.env.POSTGRES_URL;
+  if (!postgresUrl) {
+    throw new Error("Missing POSTGRES_URL");
   }
 
-  const neonPostgresUrl = process.env.NEON_URL;
-  if (!neonPostgresUrl) {
-    throw new Error("Missing NEON_URL");
-  }
-
-  const postgresjsDriverUsingNeon = await postgresjs({
+  const postgresjsDriver = await postgresjs({
     runtime,
-    databaseProvider: "postgres_neon",
+    databaseProvider: "pgsql",
     driver: postgres,
-    databaseUrl: neonPostgresUrl,
-  });
-
-  const postgresjsDriverUsingSupabase = await postgresjs({
-    runtime,
-    databaseProvider: "postgres_supabase",
-    driver: postgres,
-    databaseUrl: supabasePostgresUrl,
+    databaseUrl: postgresUrl,
   });
 
   const mysql2Driver = await mysql2(
     {
       runtime,
-      databaseProvider: "mysql_planetscale",
+      databaseProvider: "mysql",
       driver: createConnectionMysql2,
-      databaseUrl: planetscaleMysqlUrl,
+      databaseUrl: mysqlUrl,
+    },
+  );
+
+  const mariadbDriver = await mariaDb(
+    {
+      runtime,
+      databaseProvider: "mysql",
+      driver: mariadbLib,
+      databaseUrl: mysqlUrl,
     },
   );
 
   const planetscaleServerlessDriver = await planetscaleServerless(
     {
       runtime,
-      databaseProvider: "mysql_planetscale",
+      databaseProvider: "mysql",
       driver: planetscaleConnect,
-      databaseUrl: planetscaleMysqlUrl,
+      databaseUrl: mysqlUrl,
     },
   );
 
-  await run([
-    postgresjsDriverUsingNeon,
-    postgresjsDriverUsingSupabase,
+  const results = await run([
+    postgresjsDriver,
     mysql2Driver,
+    mariadbDriver,
     planetscaleServerlessDriver,
   ]);
 
-  process.exit();
+  return results;
 }
 
-init();
+function startServer() {
+  const server = http.createServer();
+  server.on("request", async (_req, res) => {
+    const result = await runWithNode();
+    console.log("GET - Fetched results: 200");
+
+    res.writeHead(200);
+    res.end(result);
+  });
+
+  const port = 8080;
+  server.listen(port, () => {
+    console.log(`Node listening on http://localhost:${port}`);
+  });
+}
+
+startServer();
