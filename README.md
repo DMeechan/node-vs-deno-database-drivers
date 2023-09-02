@@ -53,20 +53,17 @@ Now run the Deno tests server and repeat the same steps:
 deno task start
 ```
 
-
-
 ### Results
+
+This comparison is not intended to compare Postgres vs MySQL. The goal is to compare the performance of various database drivers in the Node.js and Deno ecosystems.
 
 Testing is done using:
 
 - Fly.io `performance-1x` server with 1 CPU and 2GB RAM, hosted in `lhr` (London)
 - Planetscale Serverless MySQL free tier, hosted in `aws-eu-west-2` (London)
 - Supabase Postgres free tier, hosted in `gcp-europe-west2` (London)
-- 50 iterations per query, per driver, per runtime
 
-This comparison **is not intended to compare Postgres vs MySQL**.
-
-The goal is to compare the performance of various database drivers in the Node.js and Deno ecosystems. These graphs show the min/p25/p75/max of each driver and runtime tested:
+Each query is run 50 times with each driver, with each runtime. These graphs show the min/p25/p75/max of each driver and runtime tested. **The Y-axis shows query time in milliseconds - lower is better**:
 
 ![Connect and SELECT 1 - query results](results/2023-09-02-fly-london-results-1.png?raw=true)
 ![Select 25 rows and select 250 rows - query results](results/2023-09-02-fly-london-results-2.png?raw=true)
